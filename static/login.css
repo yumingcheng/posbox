@@ -1,0 +1,134 @@
+*{
+		margin: 0px;
+		padding: 0px;
+		list-style-type:none;
+}
+			
+a{text-decoration:none}
+
+input[type="text"],input[type="password"],input[type="nickname"]{border:2px solid #f1f1f1;outline:none;font:15px "微软雅黑","宋体",Arial;padding:5px; transition:border 0.2s ease-in 0s;}
+input[type="button"],input[type="submit"]{font-family:"微软雅黑","宋体",Arial;outline:none;cursor:pointer;border:none;}
+input[type="text"]:focus,input[type="password"]:focus{border:2px solid #d4e2e4;}
+
+#login_body{
+	background-color: #083F6D;
+}
+.login_wrapper{
+	width: 640px;
+	margin: 0 auto;
+	overflow: hidden;
+	padding-top: 110px;
+}
+.login_header{
+	width: 640px;
+	height: 60px;
+	margin-bottom: 25px;
+	/*border: 1px solid purple;*/
+}
+
+.login_header img{
+
+	width: 240px;
+	height: 60px;
+	display: block;
+	/*border: 1px solid blue;*/
+
+}
+
+.login_box{
+	width: 640px;
+	background-color:#eafffd;
+	/*background-color: #8CE4FE;*/
+	/*border: 1px solid red;*/
+	padding: 40px;
+	overflow: hidden;
+
+}
+
+#loginForm{
+	width:340px; 
+	margin:0;
+	border-right:1px solid #999; 
+	float:left;
+}
+
+#loginForm #result{
+	color: red;
+
+}
+#loginForm a{color:#019875; }
+
+
+
+#loginForm input#nickname{
+	width: 286px;
+	height: 32px;
+	margin: 8px 0px 8px 0px;
+}
+
+#loginForm input#email{
+	width: 286px;
+	height: 32px;
+	margin: 8px 0px 8px 0px;
+}
+#loginForm input#password{
+	width:286px;
+	height: 32px;
+	margin: 8px 0px 8px 0px;
+}
+#loginForm label{float:left;padding:0px 0 0px 0px;color: red;}
+#loginForm label span{font-weight:bold;}
+#loginForm input:focus{
+	
+	border:2px solid #fff;
+	-webkit-box-shadow: 0px 0px 4px #b5f0e7;
+	-moz-box-shadow: 0px 0px 4px #b5f0e7;
+	box-shadow: 0px 0px 4px #b5f0e7;
+}
+
+#loginForm .fr{
+	color:#777;
+	display: block;
+	margin-right: 40px;
+	float: right;
+}
+#loginForm .fr:hover{
+	color:#019875;
+}
+
+#submitLogin{
+	width:155px; 
+	height:46px;
+	font-size:16px; 
+	line-height:46px; 
+	clear:both; 
+	float:left; 
+	background:#019875; 
+	color:#fff; 
+	border:none; 
+	text-align:center;
+}
+#submitLogin:hover{
+ background:#083F6D;
+}
+
+.login_right{
+    width:170px;
+    height:170px;
+    padding-left:20px;
+	float: left;
+	/*border:1px solid red;*/
+}
+
+.login_right div{
+    margin-top:20px;
+    margin-bottom: 10px;
+    color:#777;
+}
+.login_right a{
+	display: block;
+	color: #8DC11E;
+}
+.login_right a:hover{
+	color: #083F6D;
+}
