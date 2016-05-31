@@ -1,0 +1,502 @@
+<!DOCTYPE html><!--STATUS OK-->
+<html>
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+	<title>销售</title> 
+	<!-- 新 Bootstrap 核心 CSS 文件 --> 
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" /> 
+	<!-- 可选的Bootstrap主题文件（一般不用引入） --> 
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" /> 
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 --> 
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script> 
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 --> 
+	<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> 
+	<script src="{{static_url("jquery.bootpag.min.js")}}"></script>
+	<link rel="stylesheet" href="{{static_url("toastr.min.css")}}" /> 
+	<script src="{{static_url("toastr.min.js")}}"></script> 
+
+	<style>
+	
+	.currentRow {
+		background-color: #d2d7de  !important; 
+	}
+
+	html {
+		position: relative;
+		min-height: 100%;
+	}
+
+	body {
+		/* Margin bottom by footer height */
+		/* min-height: 1050px; */
+		/*height: auto; min-height: 100%;*/
+		/*margin-bottom: 40px;*/
+		font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,STHeiti,"Microsoft Yahei",sans-serif;
+	}
+	
+	.footer {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		/* Set the fixed height of the footer here */
+		height: 30px;
+		background-color: #333;
+		border-top:1px solid #ccc;
+		padding:5px;
+		color:#fff;
+	}
+	
+	
+	/* currency style */
+	.align-right{
+		text-align:right;
+	}
+
+	#myContent input{
+		background-color: #efefef;  
+		border-top-width:0px;   
+		border-right-width:0px;   
+		border-bottom-width:1px;   
+		border-left-width:0px; 
+		float:left;
+		padding:0px; margin:0px
+	}
+
+
+	#myContent #myhead{
+		height: 45px;
+		border-bottom: 2px solid black;
+		font-weight: bold;
+	}
+	#myContent .wtStyle{
+		overflow: hidden;
+		padding: 8px;
+	}
+
+	.wtStyle div{
+		overflow:hidden;/* 文字隐藏 */
+		white-space:nowrap;/* 一行显示 */ 
+		text-overflow:ellipsis;/* 超出部分显示... */ 
+		float: left;
+		/*padding: 0px 3px 0px 0px;*/
+	}
+
+	#coreContent .wtStyle{
+		border-bottom: 1px solid #ccc;
+		height: 40px;
+	}
+	#coreContent .wtStyle div{
+		height: 40px;
+	/*	margin-top: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		margin-right: 10px;*/
+	}
+	.mystyle{
+	margin: 0px 10px 10px 0px;	
+    display: block;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	}
+		.toast-top-left {
+    	top: 70px;
+    	right: 12px;
+	}
+
+
+  		  #top{
+	overflow: hidden;
+	/*border: 1px solid white;*/
+}
+.navbar-brand {	
+	padding: 0px 20px;
+}
+
+.navbar-brand img{
+	height: 45px;
+}
+  
+
+
+	<style type="text/css" media="print">
+	.pull-right{float:right !important}
+	.splt{border-bottom:2px dashed #666}
+	</style> 
+</head> 
+<body> 
+	{% module NavbarUI(activeSr) %}
+			<div class="page-header">
+				<h4 style="text-align:center;">会员列表</h4>
+			</div>
+			<div class="container-fluid">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-9 col-sm-9 col-lg-9">
+							<div class="row">
+								<input class="mystyle col-md-3 col-sm-3 col-lg-3" autocomplete="off" id="query" placeholder="搜索会员号" type="text">
+								<button type="button" id="vipBtnSearch" class="btn btn-primary">会员ID搜索</button>
+							</div>
+							<div class="row">
+								<select id="scoreId" class="mystyle col-md-2 col-sm-2 col-lg-2">
+										<option value="100"> >=100分</option>
+										<option value="80">>=80分</option>
+										<option value="60">>=60分</option>
+										<option value="40">>=40分</option>
+										<option value="20">>=20分</option>
+										<option value="0">>=0分</option>
+								</select>
+								<button type="button" id="scoreBtnSearch" class="btn btn-primary">分数段搜索</button>
+							</div>
+						</div>
+					<div class="col-md-3 col-sm-3 col-lg-3">
+					<div class="pull-right">
+				<!-- 
+	<button class="btn green" onclick="location.href='/editDeposit'" ><i class="icon-money"></i> ???button.deposit???</button>
+-->
+						<button class="btn btn-info" type="button" id="btnExport">
+							<i class="icon-chevron-up"></i>导出
+						</button>
+					</div>
+					</div>
+				</div>
+			</div>
+
+
+
+<hr>
+
+
+<!-- use struts tag and original table -->
+<div class="container-fluid">
+	<div class="row">
+		<div id="myContent" class="col-md-12 col-sm-12">
+			<div id="myhead" class="wtStyle">
+				<div>&nbsp;</div>
+				<div>ID</div>
+				<div>卡号</div>
+				<div>姓名</div>
+				<div>手机</div>
+				<div>积分</div>
+				<div>积分变更时间</div>
+				<div>&nbsp;</div>
+			</div>
+			<div id="coreContent">
+			</div>	
+		</div>
+
+	</div>
+
+	<nav>
+   <p class="demo1"></p
+</nav>
+</div>
+</div>
+</div>	
+</div>
+<!-- split page end -->
+</div>
+<script>
+
+$(window).resize(function(){
+		//alert($(window).height()+"/"+$(document).height());
+		//navibar:51px, footer:55px, totalbar:45px, barcodebar:46px, tab:34px;
+		
+		//2015-10-08更新:为适合平板(sm,768~992px),当屏幕为平板时,需要减去两倍的footer高度,因为平板时footer按钮分为两行.
+		var window_width = $(window).width();//屏幕宽度
+		//alert(window_width);
+		console.log("------------------------- 屏幕宽度 @ resize-> "+window_width);
+		var footer_height = 55;
+		if(window_width>=992){//普通电脑屏幕
+			footer_height = 55;
+			$("footer").height(44);
+			$(".tablet_11").css("margin-top","0");
+		}
+		else if(window_width<992){//平板电脑屏幕
+			footer_height = 95;//两部稍小
+			$("footer").height(88);
+			$(".tablet_11").css("margin-top","5px");
+		}
+		 var bHeight = $(window).height() - 51 - parseInt(footer_height); //去掉头尾的窗口高度
+		 //console.log("------------------------- 去掉头尾的窗口高度-> "+bHeight);
+		 $('#qk_tab_content').height(bHeight-46-34-20);
+		 $('#cart_container').height(bHeight-55-15);
+		 
+		 //alert("1:"+$('#qk_tab_content').height()+"/"+$('#cart_container').height());
+});
+
+jQuery(document).ready(function() {  
+		//navibar:51px, footer:55px, totalbar:45px, barcodebar:46px, tab:42px;
+		 var bHeight = $(window).height()-51-55; //去掉头尾的窗口高度
+			 $('#qk_tab_content').height(bHeight-46-34-20);//间隙20px;
+			 $('#cart_container').height(bHeight-55-15);//间隙15px;
+});
+</script> 
+<!-- END JAVASCRIPTS --> 
+</div>
+<!-- END CONTAINER -->
+
+<script type="text/javascript">
+
+var totalIndex  = 0;
+
+
+	// tdArr>每个td占的宽度数组,rightArr>右对齐数组索引数组	   ADD BY OKHPXOK 20151026 START
+	function myTable(tdArr,rightArr){
+		var tableLength = $("#myContent").width();
+		for(var i=0;i<tdArr.length;i++){
+			var tdLength = tdArr[i]/100*(tableLength -30);
+			// var divLength = tdLength - tdArr.length/2
+			// $("#myContent .wtStyle").each(function(){
+
+			// });
+			// $("#myContent .wtStyle div").each(function(){
+			// 	$(this)..width(tdLength)
+			// });
+
+$("#myhead div").eq(i).width(tdLength);
+$("#myhead div").eq(i).height(30);
+
+var trs = $("#coreContent .wtStyle");
+for(var j=0;j<$(trs).length;j++){
+	var div = $(trs).eq(j).find("div").eq(i)
+    			// $(trs).eq(j).find("td").eq(i).width(tdLength).attr("title",$(div).text());
+    			$(div).width(tdLength);
+    			for(var r=0;r<rightArr.length;r++){
+    				if(rightArr[r]==i){
+    					$(div).find("input").eq(0).css("width",tdLength-10)
+        				// console.log("阿啊阿啊阿啊阿啊啊" ＋ $(div).find("input").eq(0).val())
+        			}
+        		}
+        	}
+        	console.log(tdLength +"\t" + (parseInt(tdLength)-2));
+
+        }
+    }
+    	// $("#coreContent .wtStyle div input").each(function(){
+    	// 	$(this).width()
+    	// });
+	myTable([9,9,15,13,13,13,13,15],[3,4,5]);
+	$(window).resize(function(){
+		myTable([9,9,15,13,13,13,13,15],[3,4,5]);
+
+	}); 
+
+function setCurrentRowBg(cartIndex) {
+	$("#coreContent .wtStyle").each(function() {
+		if($(this).attr("id") == cartIndex){
+			$(this).addClass("currentRow")
+		}else{
+			$(this).removeClass("currentRow")
+		}
+	})
+}
+
+function selectVipInfo(){
+	if($("#query").val() == ""){
+		return
+	}
+	$('.demo1').css("visibility","hidden")
+	url = "/vip/info?cardnumber=" + $("#query").val()
+        $.ajax({
+    	cache: false,
+    	type: "GET",
+    	url:url,
+		async: false,
+		error: function(request) {
+			toastr.error('出现内部错误！请重试！')
+		},
+		success: function(data) {
+			clearVips();
+			var obj = JSON.parse(data);
+			var ifnew = obj.success=="false"? "visible":"hidden";
+			console.log(obj.name == null ? "":obj.name,obj.phonenumber== null? "":obj.phonenumber,obj.points==null?"":obj.points,obj.updated==null?"2016-05-27 03:15:36":obj.updated)
+			addVips(obj.cardnumber,obj.name == null ? "":obj.name,obj.phonenumber== null? "":obj.phonenumber,obj.points==null?"":obj.points,obj.updated==null?"0000-00-00 00:00:00":obj.updated,ifnew);
+			if(obj.success == "false"){
+				toastr.error(obj.cardnumber + "查询失败~")
+			}else{
+				toastr.success(obj.cardnumber + "查询成功~")
+
+			}
+		}
+		});	
+		$("#query").val('')
+        $("#query").focus()
+
+}
+
+$("#query").keyup(function(event){
+	$("#scoreId").val(0);
+	if(event.keyCode == 13){
+		clearVips()
+   		selectVipInfo()
+   	}
+});
+
+
+function clearVips() {
+	$("#coreContent .wtStyle").each(function() {
+		$(this).remove()
+	})
+	totalIndex = 0;
+
+}
+
+
+function removeGoods(e) {
+	$('#' + e).remove(); 
+}
+
+
+function updateVip(curIndex) {
+ 	var obj = {}
+	obj.vipcode = $("#" + curIndex).find("[name='vipcode']").text()
+	obj.name = $("#" + curIndex).find("[name='name'] input").val()
+	obj.phonenumber = $("#" + curIndex).find("[name='phonenumber'] input").val()
+	obj.points = $("#" + curIndex).find("[name='points'] input").val()
+	$.ajax({
+    	cache: false,
+    	type: "POST",
+    	url:"/vip/update",
+		data: JSON.stringify(obj),
+		async: false,
+		error: function(request) {
+			toastr.error("提交失败！～");
+		},
+		success: function(data) {
+			var robj = JSON.parse(data);
+			toastr.success(robj.cardnumber + "更新成功!")
+			$("#" + curIndex).find("[name='vipcode']").text()
+			$('#' + curIndex).find("[name='new_vip'] img").css("visibility","hidden")
+
+		}
+	});
+}
+
+function addVips(vipcode,name,phonenumber,points,mtime,ifnew) {
+	curIndex = totalIndex  + 1;
+
+	R = '<div id = "' + curIndex + '" class="wtStyle">' + 
+	'<div name="new_vip" title="新会员"><img style="width:26px;visibility:'+ifnew+';" src="static/xin-new.png"></div>' + 
+	'<div name="curIndex" title="ID"><strong>' + curIndex + '</strong></div>' +
+	'<div name="vipcode" title="卡号">' + vipcode + '</div>' + 
+	'<div name="name" title="姓名"><input type="text" placeholder="等待填充" style="text" value="'+ name +'"></div>' +
+	'<div name="phonenumber"title="手机"><input type="text" placeholder="等待填充" style="text" value="'+ phonenumber +'"></div>' + 
+	'<div name="points" title="积分"><input type="text" placeholder="等待填充" style="text" value="' + points +'"></div>' + 
+	'<div name="mtime" title="积分变更时间">'+ mtime +'</div>' +
+	'<div>' +
+	'<span class="btn btn-xs btn-info"  onclick="updateVip(' + curIndex  + ')">更新/添加</span>' +
+	'</div></div></div>'
+	// console.log(R)
+	totalIndex += 1
+	$("#coreContent").append(R)
+	myTable([9,9,15,13,13,13,13,15],[3,4,5]);
+	// setCurrentRowBg(curIndex)
+	return curIndex;
+}
+
+
+$("#vipBtnSearch").click(function(){
+	selectVipInfo();
+});
+ 
+
+
+    $(document).ready(function() {
+    	$("#query").focus();
+    	$("#scoreBtnSearch").click(function(){
+    		clearVips()
+			var selectValue = $("#scoreId").val();
+ 			url = "/vip/total?points=" + selectValue
+       	 	$.ajax({
+    		cache: false,
+    		type: "GET",
+    		url:url,
+			async: false,
+			error: function(request) {
+				toastr.error('出现内部错误！请重试！')
+			},
+			success: function(data) {
+				var obj = JSON.parse(data);
+				for (var i = 0; i < obj.vips.length; i++) {
+					var temp = obj.vips[i]
+					addVips(temp["cardnumber"],temp["name"],temp["phonenumber"],temp["points"],temp["updated"],"hidden")
+				};
+				$('.demo1').css("visibility","visible")
+				$('.demo1').bootpag({
+    					total: obj.total/20 + 1,
+    					page: 1,
+    					maxVisible: 10
+					}).on("page", function(event, num){
+						 	var selectValue = $("#scoreId").val();
+ 							url = "/vip/page?page=" + num + "&points=" + selectValue
+					        $.ajax({
+						    	cache: false,
+						    	type: "GET",
+						    	url:url,
+								async: false,
+								error: function(request) {
+									toastr.error('出现内部错误！请重试！')
+								},
+								success: function(data) {
+										totalIndex = 20 * (num - 1)	
+									   	$("#coreContent .wtStyle").each(function() {
+											$(this).remove()
+										});
+									   	var obj = JSON.parse(data);
+										for (var i = 0; i < obj.vips.length; i++) {
+											var temp = obj.vips[i]
+											addVips(temp["cardnumber"],temp["name"],temp["phonenumber"],temp["points"],temp["updated"],"hidden")
+										};
+								}
+							});	
+				});
+			}
+			});	
+		});
+
+  
+    	toastr.options = {
+  			"closeButton": false,
+  			"debug": true,
+  			"positionClass": "toast-top-left",
+  			"onclick": null,
+  			"showDuration": "300",
+  			"hideDuration": "1000",
+  			"timeOut": "1500",
+  			"extendedTimeOut": "1000",
+  			"showEasing": "swing",
+  			"hideEasing": "linear",
+  			"showMethod": "fadeIn",
+  			"hideMethod": "fadeOut"
+		}	
+
+        $("#btnExport").click(function(){
+        	var selectValue = $("#scoreId").val();
+ 			url = "/vip/export?points=" + selectValue
+ 			window.location=url
+
+        });
+    })
+
+
+
+
+
+	// tdArr>每个td占的宽度数组,rightArr>右对齐数组索引数组	   ADD BY OKHPXOK 20151026 END
+	</script>
+	<!-- END JAVASCRIPTS -->
+
+</body>
+</html>

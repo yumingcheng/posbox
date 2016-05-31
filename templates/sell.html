@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <title>销售</title> 
+    <!-- 新 Bootstrap 核心 CSS 文件 --> 
+<!--     <link rel="stylesheet" href="{{static_url("bootstrap.min.css")}}"/> 
+	<script type="text/javascript" src="{{static_url("bootstrap.min.js")}}"></script>
+    <script type="text/javascript" src="{{static_url("jquery.min.js")}}"></script>
+ -->	
+ 	<!-- 新 Bootstrap 核心 CSS 文件 --> 
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" /> 
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 --> 
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script> 
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 --> 
+	<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> 
+	<link rel="stylesheet" href="{{static_url("toastr.min.css")}}" /> 
+	<script src="{{static_url("toastr.min.js")}}"></script> 
+
+
+    <script src="{{static_url("jquery.key.js")}}"></script> 
+    <script src="{{static_url("sell-base.js")}}"></script>
+
+    <style>
+
+      #cart.table thead tr th {
+        font-size: 13px;
+        font-weight: 100;
+        color: rgb(85, 85, 85);
+      }
+
+      /* input[readonly] {
+         border: 0px !important;
+         background: transparent !important; 
+      } */
+
+      .currentRow {
+        background-color: #bdf9de !important; 
+      }
+
+      .bundleSaleCart {
+        background: #f9d7f9; 
+      }
+
+      .btn-hacker{
+        padding:7px 7px !important;
+      }
+
+      .qkbutton{
+        color:#fff;
+      }
+
+      #order_items td{
+        padding:1px !important;
+      }
+
+
+      .rotate {
+        -webkit-animation: rotation 2s linear infinite;
+        -moz-animation: rotation 2s linear infinite;
+        -ms-animation: rotation 2s linear infinite;
+      }
+
+      @-webkit-keyframes rotation {
+        0%   { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+      @-moz-keyframes rotation {
+        0%   { -moz-transform: rotate(0deg); }
+        100% { -moz-transform: rotate(360deg); }
+      }
+      @-ms-keyframes rotation {
+        0%   { -ms-transform: rotate(0deg); }
+        100% { -ms-transform: rotate(360deg); }
+      }
+
+	   .toast-top-right {
+    	top: 70px;
+    	right: 12px;
+	   }
+	   .toast-top-left {
+    	top: 70px;
+    	right: 12px;
+	   }
+      .divCart{
+        height: 300px;overflow-y:auto;border:1px solid #eee;			
+      }
+      .divGuide{
+        height: 336px;overflow-y:auto;border:1px solid #eee;			
+      }
+      .inputCart{
+        background:transparent;border:0;border-bottom:1px #ccc solid;width:20px;font-weight:bold;
+      }
+      #cart td {
+        padding: 3px;
+        line-height: 16px;
+        text-align: left;
+        vertical-align: top;
+        border-top: 1px solid #dddddd;
+        font-weight:100;
+        font-size:13px;
+        color:#666;
+      }
+
+      #cart input{
+        margin:0 !important; padding:2px !important;width:40px !important;font-weight:bold !important;
+        background:transparent;border:0;border-bottom:1px #ccc solid;
+        text-align:center !important;
+
+      }
+      #cart input.price{
+        margin:0 !important; padding:2px !important;width:64px !important;font-weight:bold !important;
+        text-align:right !important;
+      }
+
+      #cart .clip{
+        overflow: hidden; white-space: nowrap;/*add by fandy,7-18*/
+      }
+
+      #cart .comment{
+        font-size:9px; color:#aaa;font-weight:100 !important;
+      }
+
+
+      .clip{
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;/*add by fandy,7-18*/
+      }
+
+      /*overflow css*/
+      ::-webkit-scrollbar {
+        width: 20px;
+        height: 20px; }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.25);
+      -webkit-box-shadow: inset 1px 1px 0 rgba(0,0,0,0.05),inset 0 -1px 0 rgba(0,0,0,0.05); }
+
+  body {
+    /* Margin bottom by footer height */
+    /* min-height: 1050px; */
+    background: #fff !important;
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,STHeiti,"Microsoft Yahei",sans-serif;
+  }
+
+  .footer {
+    /*position: absolute;*/
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    /* height: 44px !important; */
+    background-color: #666; 
+    color:#fefefe;
+    /* border-top:1px solid #666; */
+    padding:0;
+  }
+
+  .panel-body{pddding:0 !important;}
+
+  #searchModal .modal-dialog, 
+  #searchCustomerModal .modal-dialog,
+  #wishlistModal .modal-dialog,
+  #refundModal .modal-dialog,
+  #shortcutModal .modal-dialog
+  {
+    width: 750px; /* your width */
+  }
+
+  #salesHistoryModal .modal-dialog
+  {
+    width: 960px; /* your width */
+  }
+
+  #i_want_to_be_bottom{
+    width:100%;
+    /*height:65px;*/
+    background:#ccc;
+    /* position:absolute;
+       bottom:0px;
+       margin:0;
+       border-radius:  0 0 3px 3px ;
+       padding-top:3px; */
+  }
+
+  .qk-panel, .cart-panel{
+    margin:0;
+    padding:0;
+    border:1px solid #ccc;
+    border-radius:3px;
+  }
+
+
+  /*CUSTOMER TAB*/
+  /*  member tab */
+  div.member-tab-container{
+    z-index: 10;
+    background-color: #ffffff;
+    padding: 0 !important;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    border:1px solid #ddd;
+    margin-top: 20px;
+    margin-left: 0px;
+    /*  -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        -moz-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        background-clip: padding-box;
+        opacity: 0.97;
+        filter: alpha(opacity=97); */
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,STHeiti,"Microsoft Yahei",sans-serif;
+    color:#000;
+  }
+  div.member-tab-menu{
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+  }
+  div.member-tab-menu div.list-group{
+    margin-bottom: 0;
+  }
+  div.member-tab-menu div.list-group>a{
+    margin-bottom: 0;
+  }
+  div.member-tab-menu div.list-group>a .glyphicon,
+  div.member-tab-menu div.list-group>a .fa {
+    color: #000;
+  }
+  div.member-tab-menu div.list-group>a:first-child{
+    border-top-right-radius: 0;
+    -moz-border-top-right-radius: 0;
+  }
+  div.member-tab-menu div.list-group>a:last-child{
+    border-bottom-right-radius: 0;
+    -moz-border-bottom-right-radius: 0;
+  }
+  div.member-tab-menu div.list-group>a.active,
+  div.member-tab-menu div.list-group>a.active .glyphicon,
+  div.member-tab-menu div.list-group>a.active .fa{
+    /* background-color: #337ab7;
+       background-image: #337ab7;
+       color: #ffffff; */
+    background-color: transparent;
+    border:0;
+  }
+
+  /* div.member-tab-menu div.list-group>a.active:after{
+     content: '';
+     position: absolute;
+     left: 100%;
+     top: 50%;
+     margin-top: -13px;
+     border-left: 0;
+     border-bottom: 13px solid transparent;
+     border-top: 13px solid transparent;
+     border-left: 10px solid #337ab7;
+  } */
+
+  .list-group-item{
+    height:80px;
+    padding-top:25px;
+    color:#000 !important;
+  }
+
+  div.member-tab-content{
+    background-color: #ffffff;
+    /* border: 1px solid #eeeeee; */
+    padding-left: 20px;
+    padding-top: 10px;
+  }
+
+  div.member-tab div.member-tab-content:not(.active){
+    display: none;
+  }
+
+  .datepicker{z-index:1151 !important;}
+
+  /* MODIFY BY OKHPXOK 20151008 START */
+  .shop {
+    width: 20%;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    margin:10px;
+    border:1px solid #fff;
+    font-size:1em;
+    height:90px;
+  }
+
+  .pname {
+    margin-top: 2px;
+    height: 28px;
+    white-space: normal;
+    overflow: hidden;
+    line-height: 28px;
+  }
+  .pcode {
+    color: #999;
+    font-size: xx-small;
+    font-family: serif;
+  }
+  .pprice {
+    font-weight: bold;
+    font-size:1.5em;
+  }
+  .qkBoxDisabled {
+    text-decoration: line-through;
+  }
+
+  .shopImage {
+    width: 16.6%;
+    padding-top: 0.5px;
+    padding-right: 0.5px;
+    padding-bottom: 0.5px;
+    padding-left: 0.5px;
+    margin: 0px;
+    border: 1px solid #fff;
+    font-size: 1em;
+    height: 100px;
+  }
+
+  .bgS{
+    height: 65px;
+  }
+
+  .bgX{
+    height: 35px;
+    background:rgba(255, 255, 255, 0.5) none repeat scroll 0 0 !important;/*实现FF背景透明，文字不透明*/
+    filter:Alpha(opacity=50); 
+    background:#fff;/*实现IE背景透明*/
+  }
+
+  .pnameImage {
+    margin-top: 2px;
+    white-space:nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    line-height: 14px;
+  }
+  /* MODIFY BY OKHPXOK 20151008 END */
+
+  .full-width{
+    width:100% !important;
+  }
+  #scroll_left,#scroll_right{position:absolute;top:0;z-index:3;}
+  #qk_tab {overflow:hidden;white-space:nowrap;border-radius:3px;border:1px solid #adadad;margin-bottom:0;}
+  #qk_tab a{border:1px solid #adadad;border-top:0;border-bottom:0;display:inline-block;width: auto;margin:0;}
+
+  .fixedTitleRow{
+    z-index: 3;
+  }
+  .fixedTitleColumn,.fixedTitleRow{
+    position: relative;
+    background-color: #fff;
+  }
+
+  		  #top{
+	overflow: hidden;
+	/*border: 1px solid white;*/
+}
+.navbar-brand {	
+	padding: 0px 20px;
+}
+
+.navbar-brand img{
+	height: 45px;
+}
+    </style> 
+    <style type="text/css" media="print">
+      .pull-right{float:right !important}
+      .splt{border-bottom:2px dashed #666}
+    </style> 
+  </head> 
+  <body> 
+	{% module NavbarUI(activeSr) %}
+    <div class="container-fluid"> 
+      <!-- sell panel start --> 
+      <div id="current_sale_panel" style="margin-top:0px;"> 
+        <div class="row"> 
+          <!-- BEGIN BARCODE & QK PANEL --> 
+          <div class="col-md-6 col-sm-6" id="barcode_div"> 
+            <!-- enter barcode  --> 
+            <div class="row"> 
+              <div class="col-md-12 col-sm-12"> 
+                <div id="enterbarcode_div"> 
+                  <div class="input-group"> 
+                    <input id="bar_code" class="form-control input-lg ui-autocomplete-input" placeholder="条码" type="text" autocomplete="off" />
+                    <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span> 
+                    <input type="hidden" id="selected_product_id" /> 
+                    <span class="input-group-btn"> <button class="btn btn-success btn-lg" onclick="addCartPre()"><i class="glyphicon glyphglyphicon glyphicon-ok"></i> 确定</button> </span> 
+                  </div>
+                  <!-- /input-group --> 
+                </div> 
+              </div> 
+            </div> 
+            <!-- //enter barcode  --> 
+            <!-- BEGIN QK --> 
+            <div class="qk-panel row" style="margin-top:5px;"> 
+              <div class="row"> 
+                <div class="col-md-12 col-sm-12"> 
+                  <div id="qk_div"> 
+                    <!--BEGIN TABS--> 
+                    <div> 
+                      <div class="tab-content" id="qk_tab_content" style="overflow-y: auto; height: 406px;"> 
+                        <div class="tab-pane  active" id="tab_0"> 
+                          <span title="0.1元商品" class="btn shop " style="background:#ffccff;" onclick="addCart('1','800000001','0.1元商品','0.10');"> 
+                            <div class="pname">
+                              0.1元商品
+                            </div> 
+                         
+                            <div class="pcode">
+                              800000001
+                            </div> 
+                             <div class="pprice">
+                              ￥0.1
+                            </div> 
+                          </span> 
+                            <span title="0.5元商品" class="btn shop " style="background:#ccffcc;" onclick="addCart('1','800000002','0.5元商品','0.50');"> 
+                              <div class="pname">
+                                0.5元商品
+                              </div> 
+                              <div class="pcode">
+                                800000002
+                              </div> 
+                              <div class="pprice">
+                                ￥0.5
+                              </div> </span> 
+                              <span title="1.0元商品" class="btn shop " style="background:#ccccff;" onclick="addCart('1','800000003','1.0元商品','1.00');"> 
+                                <div class="pname">
+                                  1.0元商品
+                                </div> 
+                                <div class="pcode">
+                                  800000003
+                                </div> 
+                                <div class="pprice">
+                                  ￥1.0
+                                </div> </span> 
+                                <span title="2.0元商品" class="btn shop " style="background:#ffffcc;" onclick="addCart('0','800000004','2.0元商品','2.00');"> 
+                                  <div class="pname">
+                                    2.0元商品
+                                  </div> 
+                                  <div class="pcode">
+                                    800000004
+                                  </div> 
+                                  <div class="pprice">
+                                    ￥2.0
+                                  </div> </span> 
+                                  <span title="5.0元商品" class="btn shop " style="background:#ccccff;" onclick="addCart('0','800000005','5.0元商品','5.00');"> 
+                                    <div class="pname">
+                                      5.0元商品
+                                    </div> 
+                                    <div class="pcode">
+                                      800000005
+                                    </div> 
+                                    <div class="pprice">
+                                      ￥5.0
+                                    </div> </span> 
+                                    <span title="10.0元商品" class="btn shop " style="background:#ffffcc;" onclick="addCart('0','800000006','10.0元商品','10.00');"> 
+                                      <div class="pname">
+                                        10.0元商品
+                                      </div> 
+                                      <div class="pcode">
+                                        800000006
+                                      </div> 
+                                      <div class="pprice">
+                                        ￥10.0
+                                      </div> </span> 
+                                      <span title="20.0元商品" class="btn shop " style="background:#ccffcc;" onclick="addCart('0','800000007','20.0元商品','20.00');"> 
+                                        <div class="pname">
+                                          20.0元商品
+                                        </div> 
+                                        <div class="pcode">
+                                          800000007
+                                        </div> 
+                                        <div class="pprice">
+                                          ￥20.0
+                                        </div> </span> 
+                                        <span title="50.0元商品" class="btn shop " style="background:#ffccff;" onclick="addCart('0','800000008','50.0元商品','50.00');"> 
+                                          <div class="pname">
+                                            50.0元商品
+                                          </div> 
+                                          <div class="pcode">
+                                            800000004
+                                          </div> 
+                                          <div class="pprice">
+                                            ￥50.0
+                                          </div> </span> 
+                                          <span title="100.0元商品" class="btn shop " style="background:#ccccff;" onclick="addCart('0','800000009','100.0元商品','100.00');"> 
+                                            <div class="pname">
+                                              100.0元商品
+                                            </div> 
+                                            <div class="pcode">
+                                              800000004
+                                            </div> 
+                                            <div class="pprice">
+                                              ￥100.0
+                                            </div> </span> 
+                        </div> 
+                      </div> 
+                    </div> 
+                    <!--END TABS--> 
+                  </div> 
+                </div> 
+              </div> 
+            </div> 
+            <!-- END QK --> 
+          </div> 
+          <!-- END BARCODE & QK PANEL --> 
+          <!-- BEGIN CART PANEL--> 
+          <div class="col-md-6 col-sm-6" id="cart_div"> 
+            <div class="cart-panel"> 
+              <div id="cart_container" style="overflow-y: auto;"> 
+                <table class="table" id="cart" style="table-layout:fixed;"> 
+                  <thead>
+                    <tr style="">
+                      <th style="width:5%">#</th>
+                      <th style="width:25%">品名/条码</th>
+                      <th style="text-align:right">标价</th>
+                      <th>折扣⒟</th>
+                      <th style="text-align:right">零售价</th>
+                      <th style="text-align:right">数量⒮</th>
+                      <th style="text-align:right">小计</th>
+                      <th style="width:8%">&nbsp;</th>
+                    </tr>
+                  </thead> 
+                  <tbody> 
+                    <!-- 					<tr id="34" class="currentRow">
+                      <td>1<br><i class="glyphicon glyphicon-star-empty"></i></td>
+                      <td class="clip" title="演示商品5">演示商品5<br><span class="comment">800000005</span></td>
+                      <td style="text-align:right">20.00</td>
+                      <td>
+                      <input class="remember" onchange="updateCart(&quot;34&quot;,this,1)" type="text" name="discount" value="100" style="">
+                      </td>
+                      <td>
+                      <input class="price remember" onchange="updateCart(&quot;34&quot;,this,3)" type="text" name="sale_price" value="20.00">
+                      </td>
+                      <td style="text-align:right">
+                      <input class="remember" onchange="updateCart(&quot;34&quot;,this,2)" type="text" name="qty" value="1" style="">
+                      </td>
+                      <td style="text-align:right">20.00</td>
+                      <td style="text-align:right">
+                      <span class="btn btn-xs" onclick="removeCart(&quot;34&quot;)"><i class="glyphicon glyphicon-remove white"></i></span>
+                      </td>
+                      </tr> --> 
+                  </tbody> 
+                </table> 
+              </div> 
+              <div id="i_want_to_be_bottom"> 
+                <div class="container-fluid"> 
+                  <div class="row"> 
+                    <div class="col-md-3 col-sm-3" style="margin-top:10px;"> 
+<!--                       <div class="btn-group"> 
+                        <button id="price_type_0" class="btn btn-xs btn-primary"> 零售价</button> 
+                      </div> 
+                      <input type="hidden" id="price_type" value="0" /> 
+ -->                    </div> 
+                    <div class="col-md-9 col-sm-9"> 
+                      <ul class="list-unstyled amounts pull-right" style="text-align: right; display: block;" id="ul_t"> 
+                        <li> <span style="margin-top:-5px;font-size:1.5em !important;">合计:</span> <span style="font-size:2.5em;font-weight:bold;"> ￥<span id="t_sale_price">0.00</span> </span> </li> 
+                        <li style="font-size:1.5em !important;"> <span id="spn_t_points">积分:<span id="t_points">0</span>分,</span> 原价:￥<span id="t_list_price">0.00</span>, 直减:￥<span id="t_saving">0.00</span> </li> 
+                      </ul> 
+                      <input type="hidden" id="total_qty" value="0" /> 
+                      <input type="hidden" id="total_list_price" value="0" /> 
+                      <input type="hidden" id="total_price" value="0.00" /> 
+                      <input type="hidden" id="total_points" value="0" /> 
+                      <input type="hidden" id="total_saving" value="0.00" /> 
+                      <input type="hidden" id="total_sale_list_price" value="0" /> 
+                      <input type="hidden" id="total_sale_price" value="0" /> 
+                      <input type="hidden" id="total_discount_enabled_list_price" value="0" /> 
+                      <input type="hidden" id="total_discount_enabled_sale_price" value="0" /> 
+                      <input type="hidden" id="total_refund_price" value="0" /> 
+                      <input type="hidden" id="sale_order_no" value="146295739706233534" /> 
+                    </div> 
+                  </div> 
+                </div> 
+              </div> 
+            </div> 
+          </div> 
+          <!-- END CART PANEL--> 
+        </div> 
+      </div> 
+      <!-- SELL PANEL --> 
+    </div> 
+    <footer class="footer navbar navbar-fixed-bottom"> 
+      <div class="container-fluid"> 
+        <div class="row" style="margin-top:8px;"> 
+          <!-- CUSTOMER SART--> 
+          <div class="col-md-3 col-sm-6"> 
+            <!-- <select class="form-control" id="customer_sale_type" onchange="changeSaleType(this.value);" style="background:#eee;">
+              <option value="1">打折积分</option>
+              <option value="0">仅积分</option>
+              </select>
+              <input type="hidden" id="customer_sale_type" name="" value="1" /> --> 
+              <div class="input-group"> 
+                <span class="input-group-addon openMemberModal">会员 F</span> 
+                <input id="r_customer_info" class="form-control openMemberModal" placeholder="空缺" readonly="readonly" type="text" /> 
+              </div>
+              <!-- /input-group --> 
+              <!-- customer code & discount,important! --> 
+              <input type="hidden" id="customer_sale_type" value="1" /> 
+              <input type="hidden" id="customer_no" value="" /> 
+              <input type="hidden" id="customer_discount_rate" value="" /> 
+          </div> 
+          <!-- CUSTOMER END --> 
+          <!-- HOLD SART--> 
+          <div class="col-md-3 col-sm-6"> 
+          </div> 
+          <!-- HOLD END --> 
+          <!-- BTN SART--> 
+          <div class="col-md-4 col-sm-6 tablet_11"> 
+            <div class="btn-group btn-group-justified"> 
+              <a href="#" class="btn btn-default" onclick="clearCart();"> 清空 <span class="accesskey">F7</span> </a> 
+              <!-- 					<a href="#" class="btn btn-default" onclick="parkRemark();">
+                挂单  <span class="accesskey">F3</span>
+                </a> 
+                <a href="#" class="btn btn-default red-stripe" id="btnRetrieve"> 
+                取单 <span class="accesskey">F4</span>
+                </a> 
+              --> 
+              <a href="#" class="btn btn-default" id="btnDiscount"> 折扣 <span class="accesskey">F8</span> </a> 
+            </div> 
+          </div> 
+          <!-- BTN END --> 
+          <!-- CHECKOUT BTN SART--> 
+          <div class="col-md-2 col-sm-6 tablet_11"> 
+            <a href="#" class="btn btn-success" id="btnCheckout" style="font-size:20px;width:100%;padding:2px 6px"> 收银 <span class="accesskey">F2</span> </a> 
+          </div> 
+          <!-- CHECKOUT BTN END --> 
+        </div> 
+      </div>
+      <!-- CONTAINER --> 
+    </footer> 
+    <!-- discount modal --> 
+    <div id="discountModal" class="modal fade hotkey" role="dialog" aria-labelledby="gridSystemModalLabel" aria-hidden="true" tabindex="-1"> 
+      <div class="modal-dialog"> 
+        <div class="modal-content"> 
+          <div class="modal-header"> 
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" tabindex="-1">&times;</span></button> 
+            <h4 class="modal-title">
+              <!--打折-->整单折扣</h4> 
+          </div> 
+          <div class="container-fluid"> 
+            <div class="modal-body"> 
+              <div class="row"> 
+                <div class="col-md-12 col-sm-12"> 
+                  <div class="form-horizontal form-row-seperated"> 
+                    <div class="form-group"> 
+                      <label class="col-md-3 col-sm-3 control-label">优惠方式⒱</label> 
+                      <div class="col-md-6 col-sm-7"> 
+                        <div class="btn-group"> 
+                          <button class="btn btn-default btn-primary" id="btn_discount_type_a" style="width:100px;">直减</button> 
+                          <button class="btn btn-default" id="btn_discount_type_b" style="width:100px;">整折</button> 
+                        </div> 
+                        <!-- <input type="checkbox" name="btn_discount_type" id="btn_discount_type"  value="1" /> --> 
+                        <input id="all_discount_type" type="hidden" value="1" /> 
+                      </div> 
+                    </div> 
+                    <div id="discount_a"> 
+                      <div class="form-group"> 
+                        <label class="col-md-3 col-sm-3 control-label">实收金额(￥)</label> 
+                        <div class="col-md-6 col-sm-7"> 
+                          <input id="final_pay" class="form-control input-lg" placeholder="实收金额" type="text" /> 
+                          <span class="help-inline"></span> 
+                        </div> 
+                      </div> 
+                      <div class="form-group"> 
+                        <label class="col-md-3 col-sm-3 control-label">直减金额(￥)</label> 
+                        <div class="col-md-6 col-sm-7"> 
+                          <input id="all_saving" class="form-control input-lg" placeholder="优惠" type="text" value="0.00" /> 
+                          <span class="help-inline"></span> 
+                          <br /> 
+                          <span id="spn_total_discount_enabled_list_price"></span> 
+                        </div> 
+                      </div> 
+                    </div> 
+                    <div class="form-group hide" id="discount_b"> 
+                      <label class="col-md-3 col-sm-3 control-label">整单折扣(%)</label> 
+                      <div class="col-md-6 col-sm-7"> 
+                        <input id="all_discount" class="form-control input-lg" placeholder="折扣率" type="text" /> 
+                        <span class="help-inline"></span> 
+                      </div> 
+                    </div> 
+                  </div> 
+                </div> 
+              </div> 
+            </div> 
+            <div class="modal-footer"> 
+              <div class="row"> 
+                <!-- <button type="button" data-dismiss="modal" class="btn btn-default">关闭</button> --> 
+                <div class="col-md-12 col-sm-12"> 
+                  <button class="btn btn-success full-width" id="btnDiscountFull" onclick="discountFull();"> 确定 </button> 
+                </div> 
+              </div> 
+            </div> 
+          </div>
+          <!-- //container --> 
+        </div> 
+      </div> 
+    </div> 
+    <!-- // discount modal --> 
+    <!-- secect customer modal --> 
+    <div id="memberModal" class="modal fade hotkey" role="dialog" aria-labelledby="gridSystemModalLabel" aria-hidden="true" tabindex="-1"> 
+      <div class="modal-dialog"> 
+        <div class="modal-content"> 
+          <div class="modal-header"> 
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" tabindex="-1">&times;</span></button> 
+            <h4 class="modal-title text-center">会员积分</h4> 
+          </div> 
+          <div class="container-fluid"> 
+            <div class="modal-body"> 
+              <div class="row"> 
+                <div class="col-md-12 col-sm-12" style="margin-top:0px;"> 
+                  <div class="input-group"> 
+                    <input id="ac_customer_no" class="form-control input-lg" placeholder="会员卡号" type="text" /> 
+                    <span class="input-group-btn"> <button class="btn btn-primary btn-lg" id="btnGetCustomer">搜索</button> </span> 
+                  </div> 
+                </div> 
+              </div> 
+              <!-- 	<input id="ac_customer_no" class="form-control input-lg ui-autocomplete-input" placeholder="会员卡号/手机/会员名⒢" type="text" autocomplete="off"> --> 
+              <div class="row input-lg" style="margin-top:10px;"> 
+                <label class="col-xs-6 col-md-6 col-sm-6 control-label">卡号:</label> 
+                <p class="col-xs-6 col-md-6 col-sm-6" id="x_customer_number"></p> 
+              </div> 
+              <div class="row input-lg"> 
+                <label class="col-xs-6 col-md-6 col-sm-6 control-label">姓名:</label> 
+                <p class="col-xs-6 col-md-6 col-sm-6" id="x_customer_name"></p> 
+              </div> 
+              <div class="row input-lg"> 
+                <label class="col-xs-6 col-md-6 col-sm-6 control-label">积分:</label> 
+                <p class="col-xs-6 col-md-6 col-sm-6" id="x_customer_points"><span>分</span></p> 
+              </div> 
+              <div class="row input-lg"> 
+                <label class="col-xs-6 col-md-6 col-sm-6 control-label">手机:</label> 
+                <p class="col-xs-6 col-md-6 col-sm-6" id="x_customer_phone"></p> 
+              </div> 
+            </div>
+            <!-- //modal-body --> 
+            <div class="modal-footer"> 
+              <div class="row"> 
+                <div id="x_t1"> 
+                  <div class="col-md-6 col-sm-6"></div> 
+                  <div class="col-md-6 col-sm-6"> 
+                    <!-- <button type="button" data-dismiss="modal" class="btn btn-default">关闭</button> --> 
+                    <button type="button" id="btnSell4Customer" onclick="sellForCustomerEx();" class="btn btn-success membersubmit" style="width:100%;"> 确定</button> 
+                  </div> 
+                </div> 
+              </div>
+              <!-- //row (in footer) --> 
+            </div> 
+          </div>
+          <!-- //container --> 
+        </div> 
+      </div> 
+    </div> 
+    <!-- // select customer modal --> 
+    <script>
+
+      $(window).resize(function(){
+        //alert($(window).height()+"/"+$(document).height());
+        //navibar:51px, footer:55px, totalbar:45px, barcodebar:46px, tab:34px;
+
+        //2015-10-08更新:为适合平板(sm,768~992px),当屏幕为平板时,需要减去两倍的footer高度,因为平板时footer按钮分为两行.
+        var window_width = $(window).width();//屏幕宽度
+        //alert(window_width);
+        console.log("------------------------- 屏幕宽度 @ resize-> "+window_width);
+        var footer_height = 55;
+        if(window_width>=992){//普通电脑屏幕
+          footer_height = 55;
+          $("footer").height(44);
+          $(".tablet_11").css("margin-top","0");
+        }
+        else if(window_width<992){//平板电脑屏幕
+          footer_height = 95;//两部稍小
+          $("footer").height(88);
+          $(".tablet_11").css("margin-top","5px");
+        }
+        var bHeight = $(window).height() - 51 - parseInt(footer_height); //去掉头尾的窗口高度
+        //console.log("------------------------- 去掉头尾的窗口高度-> "+bHeight);
+        $('#qk_tab_content').height(bHeight-46-34-20);
+        $('#cart_container').height(bHeight-85-15);
+
+        //alert("1:"+$('#qk_tab_content').height()+"/"+$('#cart_container').height());
+      });
+
+jQuery(document).ready(function() {   
+  //navibar:51px, footer:55px, totalbar:45px, barcodebar:46px, tab:42px;
+  var bHeight = $(window).height()-51-55; //去掉头尾的窗口高度
+  $('#qk_tab_content').height(bHeight-46-34-20);//间隙20px;
+  $('#cart_container').height(bHeight-85-15);//间隙15px;
+});
+//初始化网店新订单菜单 ADD BY CPQ
+function initOnlineShopTrades(){
+  var settings = JSON.parse(localStorage.getItem("settings"));
+  var outlets = settings[3].outlets;
+  var len = outlets.length;
+  for(var i=0; i<len; i++){
+    if(outlets[i].outlet_id == getSetting('oId')){
+      $("#netShopEnabled").val(outlets[i].netShopEnabled);
+      if(outlets[i].netShopEnabled == 2){
+        $("#ol_shop").removeClass("hidden");
+      }
+    }
+  }
+}
+    </script> 
+  <!-- END JAVASCRIPTS -->  
+  </body>
+</html>
