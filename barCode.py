@@ -58,7 +58,6 @@ class BarCodeInfo(object):
 
 
     def __init__(self):
-        self.flag = 0
         self.cache = {}
         #self.get_identifying_code()
         pass
@@ -85,8 +84,9 @@ class BarCodeInfo(object):
         if code in self.cache:
             return self.cache[code]
         reInfo = {}
-        if self.flag == 0  or int(time.time()) - self.cookieUpdate > 600:
+        if int(time.time()) - self.cookieUpdate > 600:
             if self.get_identifying_code() == None:
+                self.cookieUpdate = 0
                 return {}
         print self.dinfo.toCookie()
         print self.dinfo.get_doorCode()
