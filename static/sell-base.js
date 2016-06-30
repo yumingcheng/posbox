@@ -221,14 +221,14 @@ function searchCustomerInfo(){
 					$("#x_customer_number").text(obj.cardnumber)	
 					$("#x_customer_number").attr("success","true")				
 					$("#x_customer_name").text(obj.name == "" ? "空" : obj.name)
-					$("#x_customer_points").text(obj.points == "" ? "空" : obj.points)
+					$("#x_customer_points").text(obj.points == "" ? "0" : obj.points)
 					$("#x_customer_phone").text(obj.phonenumber == "" ? "空" : obj.phonenumber)
 					$(".input-lg p").css("color","")
 				}else{
 					$("#x_customer_number").attr("success","flase")				
 					$("#x_customer_number").text("卡号\"" + obj.cardnumber + "\"不存在!")
 					$("#x_customer_name").text("空")
-					$("#x_customer_points").text("空")
+					$("#x_customer_points").text("0")
 					$("#x_customer_phone").text("空")
 					$(".input-lg p").css("color","red")
 				}
